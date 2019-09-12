@@ -1,0 +1,32 @@
+@import './normalize.css';
+
+:root {
+    /* CSS中定义变量 */
+    --color-text: #666;
+    --color-high-text: #c00;
+    --color-background: #fff;
+    --font-size: 14px;
+    --line-height: 1.5;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    background: var(--color-background);
+    color: var(--color-text);
+    width: 100vw;
+}
+
+.clear-fix::after {
+    clear: both;
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+}
+.clear-fix{
+    float: left;
+}
