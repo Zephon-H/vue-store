@@ -24,6 +24,10 @@ body {
   font-size: var(--font-size)
 }
 
+ul {
+  list-style: none;
+}
+
 .clear-fix::after {
   clear: both;
   content: '';

@@ -6,62 +6,114 @@
             style="font-size:22px"></span>
       <div slot="center">
         <span class="red">JD</span>
-        <i class='gray'>|</i>
+        <b class='gray'>|</b>
         <span class="iconfont icon-search gray"></span>
         <input placeholder="华为平板电脑" />
       </div>
-      <span slot="right">登录</span>
+      <span slot="right"
+            style="font-size=14px">登录</span>
     </nav-bar>
+    <home-swiper :list='list'></home-swiper>
 
-    <div class="slider">
-      <div class="slider-bg"></div>
-      <div class="my-swipe">
-        <mt-swipe :auto="4000">
-          <mt-swipe-item v-for="(l, index) in list"
-                         :key="index"
-                         class="swiper-item">
+    <recommend-view :recommends='recommends'></recommend-view>
 
-            <img :src="l"
-                 class="swiper-img"
-                 alt="">
+    <tab-control :titles="['流行','新款','精选']"
+                 @tabClick="tabClick"
+                 class="tab-control"></tab-control>
 
-          </mt-swipe-item>
-        </mt-swipe>
-      </div>
-    </div>
-
+    <goods-list :goods="showGoods"></goods-list>
   </div>
 </template>
 
 <script>
+import HomeSwiper from './childComps/HomeSwiper'
+import RecommendView from './childComps/RecommendView'
+
 import NavBar from 'components/common/navbar/NavBar.vue'
-import { getHomeMultidata } from 'network/home.js'
+import TabControl from 'components/common/tabcontrol/TabControl'
+import GoodsList from 'components/content/goods/GoodsList'
 
-
+import { getHomeMultidata, getHomeGoods } from 'network/home.js'
+import '../../lib/mui/css/mui.min.css'
+import '../../lib/mui/css/icons-extra.css'
 
 export default {
   name: 'Home',
   props: [''],
   data () {
     return {
-      list: []
+      list: [],
+      recommends: [],
+      goods: {
+        'pop': { page: 0, list: [] },
+        'new': { page: 0, list: [] },
+        'sell': { page: 0, list: [] }
+      },
+      currentType: 'pop'
+    }
+  },
+  computed: {
+    showGoods () {
+      return this.goods[this.currentType].list
     }
   },
   created () {
-    this.list = getHomeMultidata().then(res => {
-      console.log(res);
-      this.list = res;
-    })
+    this.getHomeMultidata()
+    this.getHomeGoods('pop')
+    this.getHomeGoods('new')
+    this.getHomeGoods('sell')
+  },
+  methods: {
+
+    // 事件监听方法
+    tabClick (index) {
+      switch (index) {
+        case 0:
+          this.currentType = 'pop'
+          break;
+        case 1:
+          this.currentType = 'new'
+          break;
+        case 2:
+          this.currentType = 'sell'
+          break;
+        default:
+          break;
+      }
+
+      console.log(index);
+    },
+
+    // 网络请求方法
+    getHomeMultidata () {
+      getHomeMultidata().then(res => {
+        console.log(res);
+        this.list = res.swiper
+        this.recommends = res.recommends
+      }
+      )    },
+    getHomeGoods (type) {
+      const page = this.goods[type].page + 1
+      getHomeGoods(type, page).then(res => {
+        this.goods[type].list.push(...res.list)
+        this.goods[type].page = page
+        console.log(this.goods);
+      })
+    }
   },
   components: {
-    NavBar
+    NavBar,
+    HomeSwiper,
+    RecommendView,
+    TabControl,
+    GoodsList
   }
 }
 
 </script>
 <style scoped>
 .home-nav {
-  /* background-color: #c93b22; */
+  background-color: #c93b22;
   color: #fff;
   /* display: block; */
   position: fixed;
@@ -93,36 +145,9 @@ export default {
   color: #ccc;
 }
 
-.slider {
-  width: 100%;
-  height: 9.35rem;
-  overflow: hidden;
-  position: relative;
-}
-.slider-bg {
-  background-image: linear-gradient(0deg, #f1503b, #c82519 50%);
-  position: absolute;
-  top: 0;
-  left: -25%;
-  height: 7.25rem;
-  width: 150%;
-  border-bottom-left-radius: 100%;
-  border-bottom-right-radius: 100%;
-}
-
-.my-swipe {
-  width: 94%;
-  margin: 0 auto;
-  margin-top: 44px;
-}
-
-.mint-swipe {
-  height: 7rem;
-  width: 100%;
-  border-radius: 5px;
-}
-.mint-swipe img {
-  height: 100%;
-  width: 100%;
+.tab-control {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 44px;
 }
 </style>

@@ -19,6 +19,10 @@ const routes = [
     },
     {
         path: '/category',
+        component: Category
+    },
+    {
+        path: '/cart',
         component: Cart
     },
     {
