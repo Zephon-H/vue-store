@@ -1,0 +1,15 @@
+import { request } from './request'
+export function getDetail (id) {
+    return request({
+        url: '/detail',
+        params: {
+            id
+        }
+    })
+}
+
+export class GoodsInfo {
+    constructor() {
+
+    }
+}

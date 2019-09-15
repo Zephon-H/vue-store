@@ -12,21 +12,32 @@
       </div>
       <span slot="right">登录</span>
     </nav-bar>
-    <scroll class="content"
+
+    <tab-control :titles="['流行','新款','精选']"
+                 @tabClick="tabClick"
+                 ref="tabControl1"
+                 class="tab-control"
+                 v-show="isTabShow"></tab-control>
+
+    <scroll class="
+                 content"
             ref="scroll"
             :probe-type='3'
             @scroll="contentScroll"
             :pull-up-load='true'
             @pullingUp='loadMore'>
-      <home-swiper :list='list'></home-swiper>
+      <home-swiper :list='list'
+                   @swiperImageLoad='swiperImageLoad'></home-swiper>
 
       <recommend-view :recommends='recommends'></recommend-view>
 
       <tab-control :titles="['流行','新款','精选']"
                    @tabClick="tabClick"
-                   class="tab-control"></tab-control>
+                   ref="tabControl2"></tab-control>
 
-      <goods-list :goods="showGoods"></goods-list>
+      <goods-list :goods="
+                   showGoods">
+      </goods-list>
     </scroll>
 
     <!-- 组件监听点击必须加native -->
@@ -47,6 +58,7 @@ import Scroll from 'components/common/scroll/Scroll'
 import BackTop from 'components/content/backTop/BackTop'
 
 import { getHomeMultidata, getHomeGoods } from 'network/home.js'
+import { debounce } from 'common/utils'
 import '../../lib/mui/css/mui.min.css'
 import '../../lib/mui/css/icons-extra.css'
 
@@ -63,8 +75,19 @@ export default {
         'sell': { page: 0, list: [] }
       },
       currentType: 'pop',
-      isShow: false
+      isShow: false,
+      tabOffsetTop: 0,
+      isTabShow: false,
+      saveY: 0
     }
+  },
+  //   actived和deactived获取和设置位置，实现路由切换时保存位置
+  activated () {
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+    this.$refs.scroll.refresh()
+  },
+  deactivated () {
+    this.saveY = this.$refs.scroll.getScrollY()
   },
   computed: {
     showGoods () {
@@ -77,8 +100,17 @@ export default {
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
-  methods: {
+  mounted () {
 
+    // 监听item中图片加载完成
+    this.$bus.$on('itemImageLoad', () => {
+      // 刷新太过频繁的防抖动处理
+      //   this.$refs.scroll.refresh()
+      debounce(this.$refs.scroll.refresh, 200)
+    })
+
+  },
+  methods: {
     // 事件监听方法
     tabClick (index) {
       switch (index) {
@@ -94,6 +126,8 @@ export default {
         default:
           break;
       }
+      this.$refs.tabControl1.currentIndex = index
+      this.$refs.tabControl2.currentIndex = index
 
       console.log(index);
     },
@@ -103,18 +137,25 @@ export default {
       this.$refs.scroll.scrollTo(0, 0, 500)
     },
     contentScroll (position) {
+      // 判断backTop是否显示
       this.isShow = (-position.y) > 500
+
+      // 决定tabControl是否吸顶
+      this.isTabShow = (-position.y) > this.tabOffsetTop
     },
     loadMore () {
       this.getHomeGoods(this.currentType)
-      this.$refs.scroll.finishPullUp()
-      this.$refs.scroll.scroll.refresh()
+      //   this.$refs.scroll.scroll.refresh()
+    },
+    swiperImageLoad () {
+      //$el获取组件中的元素
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
+      //   console.log(this.tabOffsetTop);
     },
 
     // 网络请求方法
     getHomeMultidata () {
       getHomeMultidata().then(res => {
-        console.log(res);
         this.list = res.swiper
         this.recommends = res.recommends
       }
@@ -124,7 +165,10 @@ export default {
       getHomeGoods(type, page).then(res => {
         this.goods[type].list.push(...res.list)
         this.goods[type].page = page
-        console.log(this.goods);
+        // console.log(this.goods);
+
+        // 完成上拉加载更多
+        this.$refs.scroll.finishPullUp()
       })
     }
   },
@@ -143,16 +187,18 @@ export default {
 <style scoped>
 #home {
   height: 100vh;
+  position: relative;
 }
 .home-nav {
   background-color: #c93b22;
   color: #fff;
-  /* display: block; */
-  position: fixed;
+
+  /* 在使用浏览器原生滚动时使用 */
+  /* position: fixed;
   left: 0;
   top: 0;
   right: 0;
-  z-index: 15;
+  z-index: 15; */
 }
 .home-nav div {
   width: 100%;
@@ -181,15 +227,23 @@ export default {
   color: #ccc;
 }
 
+/* .content {
+  margin-top: 44px;
+  height: calc(100% - 93px);
+  height: 100%;
+} */
+
 .tab-control {
-  position: sticky;
-  position: -webkit-sticky;
-  top: 44px;
+  position: relative;
+  z-index: 9;
 }
 
 .content {
-  margin-top: 44px;
-  /* height: calc(100% - 93px); */
-  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
 }
 </style>

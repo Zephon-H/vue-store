@@ -24,8 +24,8 @@ export default {
     }
   },
   mounted () {
-    console.log('recomends');
-    console.log(this.recommends);
+    // console.log('recomends');
+    // console.log(this.recommends);
   },
 }
 

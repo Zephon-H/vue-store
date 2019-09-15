@@ -1,10 +1,12 @@
 <template>
   <div class="tab-bar-item"
        @click="itemClick">
-    <div v-if="!isActive">
+    <div v-if="!isActive"
+         class="icon">
       <slot name="item-icon"></slot>
     </div>
-    <div v-else>
+    <div v-else
+         class="icon">
       <slot name="item-icon-active"></slot>
     </div>
 
@@ -56,5 +58,8 @@ export default {
 .tab-bar-item span {
   font-size: 24px;
   display: block;
+}
+.icon {
+  margin-top: 5px;
 }
 </style>

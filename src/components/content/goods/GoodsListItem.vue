@@ -1,8 +1,10 @@
 <template>
-  <div class='goods-list-item'>
+  <div class='goods-list-item'
+       @click="itemClick">
     <div>
       <img :src="goodsItem.img"
-           alt="">
+           alt=""
+           @load="imageLoad">
       <div>
         <p>{{goodsItem.title}}</p>
         <span class="price">￥{{goodsItem.price}}</span>
@@ -21,18 +23,17 @@ export default {
 
     }
   },
+  methods: {
+    //   监听图片加载完成
+    //   使用vuex/事件总线  中间通信
+    imageLoad () {
+      this.$bus.$emit('itemImageLoad')
+    },
+    itemClick () {
+      this.$router.push('/detail/' + this.goodsItem.id)
+    }
+  }
 
-  components: {},
-
-  computed: {},
-
-  beforeMount () { },
-
-  mounted () { },
-
-  methods: {},
-
-  watch: {}
 
 }
 

@@ -33,21 +33,33 @@ export default {
       mouseWheel: true, // 如果不设置，则使用无法使用鼠标滚轮或使用后无法backTop
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad
-    }),
+    })
+    // 监听滚动位置
+    if (this.probeType === 2 || this.probeType === 3) {
       this.scroll.on('scroll', (position) => {
         this.$emit('scroll', position)
-      }),
-      this.scroll.on('pullingUp', () => {
-        // 通知首页加载更多
-        this.$emit('pullingUp')
       })
+    }
+    // 监听滚动到底部
+    this.scroll.on('pullingUp', () => {
+      // 通知首页加载更多
+      this.$emit('pullingUp')
+    })
   },
   methods: {
     scrollTo (x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time)
+      // this.scroll && ... 确保scroll不为null
+      this.scroll && this.scroll.scrollTo && this.scroll.scrollTo(x, y, time)
+      //   this.scroll.scrollTo(x, y, time)
     },
     finishPullUp () {
-      this.scroll.finishPullUp()
+      this.scroll && this.scroll.finishPullUp()
+    },
+    refresh () {
+      this.scroll && this.scroll.refresh()
+    },
+    getScrollY () {
+      return this.scroll ? this.scroll.y : 0
     }
   },
 }
