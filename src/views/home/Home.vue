@@ -10,18 +10,29 @@
         <span class="iconfont icon-search gray"></span>
         <input placeholder="华为平板电脑" />
       </div>
-      <span slot="right"
-            style="font-size=14px">登录</span>
+      <span slot="right">登录</span>
     </nav-bar>
-    <home-swiper :list='list'></home-swiper>
+    <scroll class="content"
+            ref="scroll"
+            :probe-type='3'
+            @scroll="contentScroll"
+            :pull-up-load='true'
+            @pullingUp='loadMore'>
+      <home-swiper :list='list'></home-swiper>
 
-    <recommend-view :recommends='recommends'></recommend-view>
+      <recommend-view :recommends='recommends'></recommend-view>
 
-    <tab-control :titles="['流行','新款','精选']"
-                 @tabClick="tabClick"
-                 class="tab-control"></tab-control>
+      <tab-control :titles="['流行','新款','精选']"
+                   @tabClick="tabClick"
+                   class="tab-control"></tab-control>
 
-    <goods-list :goods="showGoods"></goods-list>
+      <goods-list :goods="showGoods"></goods-list>
+    </scroll>
+
+    <!-- 组件监听点击必须加native -->
+    <back-top @click.native="backClick"
+              v-show="isShow"></back-top>
+
   </div>
 </template>
 
@@ -32,6 +43,8 @@ import RecommendView from './childComps/RecommendView'
 import NavBar from 'components/common/navbar/NavBar.vue'
 import TabControl from 'components/common/tabcontrol/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
+import Scroll from 'components/common/scroll/Scroll'
+import BackTop from 'components/content/backTop/BackTop'
 
 import { getHomeMultidata, getHomeGoods } from 'network/home.js'
 import '../../lib/mui/css/mui.min.css'
@@ -49,7 +62,8 @@ export default {
         'new': { page: 0, list: [] },
         'sell': { page: 0, list: [] }
       },
-      currentType: 'pop'
+      currentType: 'pop',
+      isShow: false
     }
   },
   computed: {
@@ -83,6 +97,19 @@ export default {
 
       console.log(index);
     },
+    backClick () {
+      console.log('ok')
+      console.log(this.$refs.scroll.scroll.scrollTo);
+      this.$refs.scroll.scrollTo(0, 0, 500)
+    },
+    contentScroll (position) {
+      this.isShow = (-position.y) > 500
+    },
+    loadMore () {
+      this.getHomeGoods(this.currentType)
+      this.$refs.scroll.finishPullUp()
+      this.$refs.scroll.scroll.refresh()
+    },
 
     // 网络请求方法
     getHomeMultidata () {
@@ -106,12 +133,17 @@ export default {
     HomeSwiper,
     RecommendView,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll,
+    BackTop
   }
 }
 
 </script>
 <style scoped>
+#home {
+  height: 100vh;
+}
 .home-nav {
   background-color: #c93b22;
   color: #fff;
@@ -134,8 +166,12 @@ export default {
 
 .home-nav input {
   border: none;
-  height: 76%;
+  /* height: 76%; */
   outline: none;
+}
+
+.home-nav span:last-child {
+  font-size: 14px;
 }
 
 .red {
@@ -149,5 +185,11 @@ export default {
   position: sticky;
   position: -webkit-sticky;
   top: 44px;
+}
+
+.content {
+  margin-top: 44px;
+  /* height: calc(100% - 93px); */
+  height: 100%;
 }
 </style>

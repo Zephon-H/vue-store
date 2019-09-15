@@ -36,7 +36,7 @@ export default {
 <style>
 .slider {
   width: 100%;
-  height: 9.35rem;
+  height: 7.35rem;
   overflow: hidden;
   position: relative;
 }
@@ -45,7 +45,7 @@ export default {
   position: absolute;
   top: 0;
   left: -25%;
-  height: 7.25rem;
+  height: 4.75rem;
   width: 150%;
   border-bottom-left-radius: 100%;
   border-bottom-right-radius: 100%;
@@ -54,7 +54,6 @@ export default {
 .my-swipe {
   width: 94%;
   margin: 0 auto;
-  margin-top: 44px;
 }
 
 .mint-swipe {
