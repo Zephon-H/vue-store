@@ -27,6 +27,11 @@ export default {
     //   监听图片加载完成
     //   使用vuex/事件总线  中间通信
     imageLoad () {
+      //   if (this.$route.path.indexof('/home')) {
+      //     this.$bus.$emit('homeItemImageLoad')
+      //   } else if (this.$route.path.indexof('/detail')) {
+      //     this.$bus.$emit('detailItemImageLoad')
+      //   }
       this.$bus.$emit('itemImageLoad')
     },
     itemClick () {

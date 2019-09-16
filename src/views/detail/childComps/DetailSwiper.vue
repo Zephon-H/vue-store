@@ -39,7 +39,7 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
 .slider {
   width: 375px;
   height: 375px;

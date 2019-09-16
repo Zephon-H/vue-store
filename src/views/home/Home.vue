@@ -42,7 +42,7 @@
 
     <!-- 组件监听点击必须加native -->
     <back-top @click.native="backClick"
-              v-show="isShow"></back-top>
+              v-show="isShowBackTop"></back-top>
 
   </div>
 </template>
@@ -55,16 +55,18 @@ import NavBar from 'components/common/navbar/NavBar.vue'
 import TabControl from 'components/common/tabcontrol/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
 import Scroll from 'components/common/scroll/Scroll'
-import BackTop from 'components/content/backTop/BackTop'
 
 import { getHomeMultidata, getHomeGoods } from 'network/home.js'
 import { debounce } from 'common/utils'
+import { itemListenerMixin,backTopMixin } from 'common/mixin'
+
 import '../../lib/mui/css/mui.min.css'
 import '../../lib/mui/css/icons-extra.css'
 
 export default {
   name: 'Home',
   props: [''],
+  mixins: [itemListenerMixin,backTopMixin],
   data () {
     return {
       list: [],
@@ -75,7 +77,6 @@ export default {
         'sell': { page: 0, list: [] }
       },
       currentType: 'pop',
-      isShow: false,
       tabOffsetTop: 0,
       isTabShow: false,
       saveY: 0
@@ -88,6 +89,19 @@ export default {
   },
   deactivated () {
     this.saveY = this.$refs.scroll.getScrollY()
+    // 取消全局事件监听
+    this.$bus.$off('itemImgLoad', this.itemImgListener)
+  },
+  mounted () {
+    // 抽出到mixin.js
+    // this.ItemImgListener = () => {
+    //   // 刷新太过频繁的防抖动处理
+    //   //   this.$refs.scroll.refresh()
+    //   debounce(this.$refs.scroll.refresh, 200)
+    // }
+    // // 监听item中图片加载完成
+    // this.$bus.$on('itemImageLoad', this.itemImgListener)
+
   },
   computed: {
     showGoods () {
@@ -99,16 +113,6 @@ export default {
     this.getHomeGoods('pop')
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
-  },
-  mounted () {
-
-    // 监听item中图片加载完成
-    this.$bus.$on('itemImageLoad', () => {
-      // 刷新太过频繁的防抖动处理
-      //   this.$refs.scroll.refresh()
-      debounce(this.$refs.scroll.refresh, 200)
-    })
-
   },
   methods: {
     // 事件监听方法
@@ -128,17 +132,15 @@ export default {
       }
       this.$refs.tabControl1.currentIndex = index
       this.$refs.tabControl2.currentIndex = index
-
-      console.log(index);
     },
-    backClick () {
-      console.log('ok')
-      console.log(this.$refs.scroll.scroll.scrollTo);
-      this.$refs.scroll.scrollTo(0, 0, 500)
-    },
+    // backClick () {
+    //   console.log('ok')
+    //   console.log(this.$refs.scroll.scroll.scrollTo);
+    //   this.$refs.scroll.scrollTo(0, 0, 500)
+    // },
     contentScroll (position) {
       // 判断backTop是否显示
-      this.isShow = (-position.y) > 500
+      this.isShowBackTop = (-position.y) > 500
 
       // 决定tabControl是否吸顶
       this.isTabShow = (-position.y) > this.tabOffsetTop
@@ -178,8 +180,7 @@ export default {
     RecommendView,
     TabControl,
     GoodsList,
-    Scroll,
-    BackTop
+    Scroll
   }
 }
 

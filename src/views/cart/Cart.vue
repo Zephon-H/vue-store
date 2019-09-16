@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>购物车</h1>
+
   </div>
 </template>
 
@@ -13,22 +13,9 @@ export default {
     return {
 
     }
-  },
-
-  components: {},
-
-  computed: {},
-
-  beforeMount () { },
-
-  mounted () { },
-
-  methods: {},
-
-  watch: {}
-
+  }
 }
 
 </script>
-<style lang='' scoped>
+<style scoped>
 </style>

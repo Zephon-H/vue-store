@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router/index'
+import store from './store'
 
 // 轮播图使用mint-ui
 import MintUI from 'mint-ui'
@@ -17,5 +18,6 @@ Vue.config.productionTip = false
 
 new Vue({
     render: h => h(App),
-    router
+    router,
+    store
 }).$mount('#app')
