@@ -4,11 +4,11 @@
       <div class="price">￥<em>{{goods.price}}</em></div>
       <div></div>
       <div>
-        <p><span class="iconfont icon-eye"></span></p>
+        <p><span class="iconfont icon-money"></span></p>
         降价提醒
       </div>
       <div>
-        <p><span class="iconfont icon-home"></span></p>
+        <p><span class="iconfont icon-star"></span></p>
         收藏
       </div>
     </div>

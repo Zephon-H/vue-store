@@ -58,15 +58,12 @@ import Scroll from 'components/common/scroll/Scroll'
 
 import { getHomeMultidata, getHomeGoods } from 'network/home.js'
 import { debounce } from 'common/utils'
-import { itemListenerMixin,backTopMixin } from 'common/mixin'
-
-import '../../lib/mui/css/mui.min.css'
-import '../../lib/mui/css/icons-extra.css'
+import { itemListenerMixin, backTopMixin } from 'common/mixin'
 
 export default {
   name: 'Home',
   props: [''],
-  mixins: [itemListenerMixin,backTopMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   data () {
     return {
       list: [],
@@ -84,8 +81,9 @@ export default {
   },
   //   actived和deactived获取和设置位置，实现路由切换时保存位置
   activated () {
-    this.$refs.scroll.scrollTo(0, this.saveY, 0)
     this.$refs.scroll.refresh()
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+
   },
   deactivated () {
     this.saveY = this.$refs.scroll.getScrollY()

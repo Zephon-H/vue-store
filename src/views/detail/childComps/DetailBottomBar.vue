@@ -1,15 +1,15 @@
 <template>
   <div id='bottom-bar'>
     <div>
-      <span class="iconfont icon-home"></span>
+      <span class="iconfont icon-tubiao-"></span>
       <span>客服</span>
     </div>
     <div>
-      <span class="iconfont icon-home"></span>
+      <span class="iconfont icon-store"></span>
       <span>进店</span>
     </div>
     <div>
-      <span class="iconfont icon-home"></span>
+      <span class="iconfont icon-cart"></span>
       <span>购物车</span>
     </div>
     <div @click="addToCart">加入购物车</div>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-
+import { Toast } from 'mint-ui';
 export default {
   name: 'detailBottomBar',
   props: [''],
@@ -29,9 +29,17 @@ export default {
   },
   methods: {
     addToCart () {
+      let instance = Toast('添加购物车成功');
+      setTimeout(() => {
+        instance.close();
+      }, 2000);
+
       this.$emit('addCart')
     }
   },
+  components: {
+    Toast
+  }
 }
 
 </script>
